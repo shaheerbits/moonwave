@@ -6,6 +6,7 @@ class SongsProvider extends ChangeNotifier {
   final AudioQueryService _audioQueryService = AudioQueryService();
 
   List<SongModel> _songs = [];
+  var currentSongIndex = 0;
 
   List<SongModel> get songs => _songs;
 

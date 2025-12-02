@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:moonwave/providers/songs_provider.dart';
-import 'package:moonwave/services/audio_service.dart';
-import 'package:moonwave/widgets/neu_box.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+
+import '../widgets/music_data_tile.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -15,7 +14,6 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   late SongsProvider songsProvider;
-  AudioService player = AudioService();
 
   @override
   void initState() {
@@ -35,48 +33,77 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('SONICRA', style: TextStyle(letterSpacing: 2.8, fontWeight: FontWeight.bold),),
-      ),
+      backgroundColor: Colors.transparent,
       drawer: Drawer(),
       body: Consumer<SongsProvider>(
         builder: (context, songsProvider, _) {
           final songs = songsProvider.songs;
           return Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16),
-              itemCount: songs.length,
-              itemBuilder: (context, index) {
-                final song = songs[index];
-                return NeuBox(
-                  child: ListTile(
-                    onTap: () {
-                      player.play(song.data);
-                    },
-                    horizontalTitleGap: 24,
-                    leading: QueryArtworkWidget(
-                      id: song.id,
-                      type: ArtworkType.AUDIO,
-                      artworkBorder: BorderRadius.circular(10),
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0, 0.8],
+                colors: [
+                  Color.fromRGBO(54, 60, 68, 1),
+                  Color.fromRGBO(46, 49, 54, 1),
+                ]
+              )
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Discover',
+                          style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.w900
+                          ),
+                        ),
+
+                        Row(
+                          children: [
+                            Text(
+                              'All Your ',
+                              style: TextStyle(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.w900
+                              ),
+                            ),
+
+                            Text(
+                              'Music',
+                              style: TextStyle(
+                                  color: Colors.limeAccent,
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.w900
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    title: Text(
-                      song.title,
-                      maxLines: 1, overflow:
-                      TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17,
-                      )
-                    ),
-                    subtitle: Text(song.artist ?? 'Unknown Artist', style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey.shade300,
-                    ),),
+                  ),
+
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+                      itemCount: songs.length,
+                      itemBuilder: (context, index) {
+                        final song = songs[index];
+                        return MusicDataTile(song: song, index: index,);
+                      }
+                    )
                   )
-                );
-              }
+                ],
+              ),
             ),
           );
         },
